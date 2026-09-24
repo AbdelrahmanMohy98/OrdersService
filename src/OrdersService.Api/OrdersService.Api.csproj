@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>OrdersService.Api</RootNamespace>
+    <UserSecretsId>orders-service-secrets</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.65.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.27.3" />
+    <PackageReference Include="Grpc.Tools" Version="2.65.0" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Same .proto contract as IdentityService, compiled in Client mode:
+         OrdersService only ever calls the identity gRPC service, never hosts it. -->
+    <Protobuf Include="Protos\identity.proto" GrpcServices="Client" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option csharp_namespace = "Identity.Grpc.V1";
+
+package identity;
+
+// Internal, service-to-service contract only — not exposed to browsers/clients.
+// Consumers (other microservices in the system) get their own copy of this
+// .proto file and generate a typed client from it.
+service IdentityGrpc {
+  // Looks up a user by id. Used by other services that hold a JWT with only a
+  // "sub" claim and need current profile data (email, name, roles) without
+  // round-tripping through the REST API or duplicating the identity store.
+  rpc GetUser (GetUserRequest) returns (UserReply);
+
+  // Batched lookup, for callers that need several users at once (e.g. an
+  // Orders service listing orders from many customers) — one gRPC call
+  // instead of N, which is the main latency win over calling GetUser in a loop.
+  rpc GetUsers (GetUsersRequest) returns (GetUsersReply);
+}
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message GetUsersRequest {
+  repeated string user_ids = 1;
+}
+
+message UserReply {
+  bool found = 1;
+  string id = 2;
+  string email = 3;
+  string first_name = 4;
+  string last_name = 5;
+  bool is_email_confirmed = 6;
+  repeated string roles = 7;
+}
+
+message GetUsersReply {
+  repeated UserReply users = 1;
+}
